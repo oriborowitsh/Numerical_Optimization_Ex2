@@ -3,19 +3,21 @@ import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d.art3d import Poly3DCollection
 
 
-def plot_feasible_polygon_with_path(polygon, history, limits, func_title):
+def plot_feasible_polygon_with_path_3d(polygon, history, limits, func_title):
     fig = plt.figure()
     ax = fig.add_subplot(111, projection='3d')
 
-    # Plot polygon (feasible region)
     poly = Poly3DCollection([polygon], alpha=0.3, facecolor='cyan', edgecolor='black')
     ax.add_collection3d(poly)
 
-    # Plot central path (list of x's)
     path = np.array([x for (x, _) in history])
     ax.plot(path[:, 0], path[:, 1], path[:, 2], marker='o', color='red', label='central path')
 
-    # Set axis limits
+    first = path[0]
+    last = path[-1]
+    ax.scatter(*first, color='green', label='start', zorder=5)
+    ax.scatter(*last, color='blue', label='end', zorder=5)
+
     ax.set_xlim(limits[0])
     ax.set_ylim(limits[1])
     ax.set_zlim(limits[2])
@@ -28,27 +30,24 @@ def plot_feasible_polygon_with_path(polygon, history, limits, func_title):
     plt.tight_layout()
     plt.show()
 
-def plot_central_path(func, inequalities, A, b, history, limits, func_title):
-    triangle = [
-        np.array([1.0, 0.0, 0.0]),
-        np.array([0.0, 1.0, 0.0]),
-        np.array([0.0, 0.0, 1.0])
-    ]
 
-    plot_feasible_polygon_with_path(triangle, history, limits, func_title)
 
 def plot_feasible_polygon_with_path_2d(polygon, history, limits, func_title):
     fig, ax = plt.subplots()
 
-    # Plot feasible polygon
     poly = plt.Polygon(polygon, closed=True, alpha=0.3, facecolor='cyan', edgecolor='black')
     ax.add_patch(poly)
 
-    # Plot central path
-    path = np.array([x for (x, _) in history])
-    ax.plot(path[:, 0], path[:, 1], color='red', marker='o', label='central path')
 
-    # Set limits
+    path = np.array([x for (x, _) in history])
+    ax.plot(path[:, 0], path[:, 1], color='red', marker='.', label='central path')
+
+
+    first = path[0]
+    last = path[-1]
+    ax.scatter(*first, color='green', label='start', zorder=5)
+    ax.scatter(*last, color='blue', label='end', zorder=5)
+
     ax.set_xlim(limits[0])
     ax.set_ylim(limits[1])
 
@@ -60,14 +59,14 @@ def plot_feasible_polygon_with_path_2d(polygon, history, limits, func_title):
     plt.tight_layout()
     plt.show()
 
-def plot_central_path_2d(func, inequalities, A, b, history, limits, func_title):
-    polygon = [
-        [0.0, 1.0],
-        [2.0, 1.0],
-        [2.0, 0.0],
-        [1.0, 0.0]
-    ]
-    plot_feasible_polygon_with_path_2d(polygon, history, limits, func_title)
+
+def plot_central_path(polygon, history, limits, func_title):
+    dim = len(limits)
+    if dim == 2:
+        plot_feasible_polygon_with_path_2d(polygon, history, limits, func_title)
+    if dim == 3:
+        plot_feasible_polygon_with_path_3d(polygon, history, limits, func_title)
+
 
 
 def plot_function_iterations(history, func_title, log_scale=False):
